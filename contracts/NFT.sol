@@ -11,7 +11,7 @@ contract NFT is ERC721URIStorage {
     using Counters for Counters.Counter;
     
     // Counters.Counter allow us to keep track of tokenIds
-    Counters.Counter private _tokenIds;
+    Counters.Counter private _tokenIds; // struct variable from Counters.sol
     
     // address of marketplace for NFTs to interact
     address contractAddress;
@@ -25,7 +25,7 @@ contract NFT is ERC721URIStorage {
     //     _symbol = symbol_;
     // }
 
-    // constructor  setup name, symbol (from ERC721 constructor) and marketAddress
+    // constructor  setup name, symbol -from ERC721 constructor and marketAddress from local constructor
     constructor(address marketAddress) ERC721('KryptoBirdz','KBIRDZ') {
         contractAddress = marketAddress;
     }
