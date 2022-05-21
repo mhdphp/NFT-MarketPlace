@@ -27,6 +27,7 @@ contract KBMarket is ReentrancyGuard {
     Counters.Counter private _tokensSold;
     address payable internal owner; // internal is the default visibility status in solidity
     uint256 internal listingPrice = 0.045 ether; // Although we are using matic/Polygon - commission    
+    
     constructor() {
         owner = payable(msg.sender); // owner of this contract
     }
@@ -125,7 +126,7 @@ contract KBMarket is ReentrancyGuard {
     }
 
 
-    // function to fetch market items - minted, bought and sold
+    // function to fetch market items - minted
     // return the number of unsold items an array of MarketToken
     function fetchMarketTokens() public view returns(MarketToken[] memory){
         // get all the tokens number - the no start at 1
@@ -213,8 +214,6 @@ contract KBMarket is ReentrancyGuard {
             }
         }
         return items; // return an array of MarketToken[] that belong to the caller - the seller
-
-
     }
 }
 
