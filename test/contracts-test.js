@@ -30,22 +30,38 @@ describe("Contracts", function () {
         const auctionPrice = ethers.utils.parseUnits('55', 'ether');
 
         // test for minting
-        nft.mintToken('http--t1'); // tokenId = 1, automatic
-        nft.mintToken('http--t2'); // tokenId = 2, automatic
+        nft.mintToken('http--t1'); // tokenId = 1, automatic, tokenURI is 'http--t1'
+        nft.mintToken('http--t2'); // tokenId = 2, automatic, tokenURI is 'http--t2'
 
         // put nft to market
         await market.makeMarketItem(nftContractAddress, 1, auctionPrice, {value: listingPrice});
         await market.makeMarketItem(nftContractAddress, 2, auctionPrice, {value: listingPrice});
 
         // test for different addresses from different users - test accounts
-        // return an array of addresses
-        const[_, buyerAddress] = await ethers.getSigners();
+        // return an array of addresses, owner address and contract address 
+        // const[_, buyerAddress] = await ethers.getSigners();
 
-        // create a market sale, with id and address
-        await market.connect(buyerAddress).createMarketSale(nftContractAddress, 1, {value: auctionPrice});
+        // create a market sale, with id=1 and address, using the buyerAddress
+        // await market.connect(buyerAddress).createMarketSale(nftContractAddress, 1, {value: auctionPrice});
 
         // test all the items
-        const items = await market.fetchMarketTokens();
-        console.log('items', items);
+        // items is an array of MarketToken struct
+        // // return the number of unsold items an array of MarketToken
+        let items = await market.fetchMarketTokens();
+
+        // each object of the array is a MarkenToken struct
+        items = await Promise.all(items.map(async i =>{
+            //
+            let tokenURI = await nft.tokenURI(i.tokenId);
+            let item = {
+                price   :   i.price.toString(), // for making the price readeable
+                tokenId :   i.tokenId.toString(),
+                seller  :   i.seller,
+                owner   :   i.owner,
+                tokenURI
+            }
+            return item
+        }));
+        console.log('unsold_items', items);
     });
 });
