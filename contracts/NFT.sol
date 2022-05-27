@@ -30,6 +30,11 @@ contract NFT is ERC721URIStorage {
         contractAddress = marketAddress;
     }
 
+    // get the current tokenId
+    function getCurrentItemId() public view returns(uint256){
+        return _tokenIds.current();
+    }
+
     // mint function, give access to all the parameters of the image
     // contract address, tokenId, image URI
     function mintToken(string memory tokenURI) public returns(uint) {
@@ -46,5 +51,4 @@ contract NFT is ERC721URIStorage {
         // return the new minted tokenId
         return newItemId;
     }
-
 }

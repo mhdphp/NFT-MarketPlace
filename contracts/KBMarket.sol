@@ -57,10 +57,29 @@ contract KBMarket is ReentrancyGuard {
         bool sold
     );
 
+    // get owner address
+    function getOwner() public view returns(address){
+        return owner;
+    }
+
+    // get caller
+    function getCallerAddress() public view returns(address){
+        return msg.sender;
+    }
 
     // get the listing price
     function getListingPrice() public view returns(uint256) {
         return listingPrice;
+    }
+
+    // get the currentId
+    function getCurrentId() public view returns(uint256){
+        return _tokenIds.current();
+    }
+
+    // get the MarketTokens based on id
+    function getMarketTokens(uint256 itemId) public view returns(MarketToken memory){
+        return idToMarketToken[itemId];
     }
 
 
@@ -106,18 +125,14 @@ contract KBMarket is ReentrancyGuard {
         uint price = idToMarketToken[itemId].price;
         uint tokenId = idToMarketToken[itemId].tokenId;
         require(msg.value == price, 'Pls submmit the asking price in order to continue');
-        
         // transfer the price amount to the seller
         idToMarketToken[itemId].seller.transfer(msg.value);
-        
         // transfer the token from this contract address to the buyer / the new owner
         IERC721(nftContract).transferFrom(address(this), msg.sender, tokenId);
-        
         // update the idToMarketToken struct
         // the ower has changed / the status of sold is changed to true
         idToMarketToken[itemId].owner = payable(msg.sender);
         idToMarketToken[itemId].sold = true;
-        
         // increase the no of tokens sold
         _tokensSold.increment();
 
@@ -188,7 +203,7 @@ contract KBMarket is ReentrancyGuard {
 
     // function that returns an array of minted nfts
     // the seller is minting the nfts
-    function fetchItemsCreated () public view returns(MarketToken[] memory){
+    function fetchItemsCreated() public view returns(MarketToken[] memory){
         // the same as fetchMyNFTs but instead of .owner will be .seller
         uint totalItemCount = _tokenIds.current();
         uint itemCount = 0;
