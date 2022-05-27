@@ -1,4 +1,5 @@
 import '../styles/globals.css'
+import './app.css'
 import Link from 'next/link'
 
 function KryptoBirdMarketplace({Component, pageProps}) {
@@ -8,22 +9,22 @@ function KryptoBirdMarketplace({Component, pageProps}) {
         <p className='text-4x1 font-bold text-white'>KryptoBird Marketplace</p>
         <div className='flex mt-4 justify-center'>
           <Link href='/'>
-            <a className='mr-4'>
+            <a className='mr-4 font-bold'>
               Main Marketplace
             </a>
           </Link>
           <Link href='/mint-item'>
-            <a className='mr-6'>
+            <a className='mr-6 font-bold'>
               Mint Tokens
             </a>
           </Link>
           <Link href='/my-nfts'>
-            <a className='mr-6'>
+            <a className='mr-6 font-bold'>
               My NFts
             </a>
           </Link>
           <Link href='/account-dashboard'>
-            <a className='mr-6'>
+            <a className='mr-6 font-bold'>
               Account Dashboard
             </a>
           </Link>
