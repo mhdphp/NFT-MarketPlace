@@ -57,6 +57,25 @@ export default function Home() {
     setLoadingState('loaded')
   }
 
+  // function to buy nfts for market 
+  async function buyNFT(nft) {
+    const web3Modal = new Web3Modal() // library to detect browse based wallets
+    const connection = await web3Modal.connect() // connect to the active wallet Metamask in our case
+    const provider = new ethers.providers.Web3Provider(connection)
+    // get signer - caller of the contract
+    const signer = provider.getSigner()
+    const contract = new ethers.Contract(nftMarketAddress, KBMarket.abi, signer)
+
+    // convert price to readable string
+    const price = ethers.utils.parseUnits(nft.price.toString(), 'ether')
+    // call the createMarketSale() function from the contract
+    const transaction = await contract.createMarketSale(nftAddress, nft.tokenId, {
+      value: price
+    })
+    await transaction.wait()
+    loadNFTs()
+  }
+
 
   return (
     <div>
