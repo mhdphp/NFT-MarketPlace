@@ -17,7 +17,8 @@ const client = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0')
 export default function MintItem() {
     // the fileUrl is set to null
     const [fileUrl, setFileUrl] = useState(null)
-    // formInput object initiation in useState (price, name, description) - NFT file in IPFS
+    // formInput object initiation in useState (price, name, description)
+    // there will be 3 inputs price, name and description - inserted by the user Front-End
     const [formInput, updateFormInput] = useState({price: '', name:'', description:''})
     const router = useRouter()
 
@@ -85,5 +86,43 @@ export default function MintItem() {
         await transaction.wait()
         router.push('./')
     }
+
+    return(
+        <div className='flex justify-center'>
+            <div className='w-1/2 flex flex-col pb-12'>
+            <input
+                placeholder='Asset Name'
+                className='mt-8 border rounded p-4'
+                // using spread operator for updating the state - formInput, when input is changing
+                onChange={ e => updateFormInput({...formInput, name: e.target.value})} 
+            />
+            <textarea
+                placeholder='Asset Description'
+                className='mt-2 border rounded p-4'
+                onChange={ e => updateFormInput({...formInput, description: e.target.value})} 
+            />
+            <input
+                placeholder='Asset Price in Eth'
+                className='mt-2 border rounded p-4'
+                onChange={ e => updateFormInput({...formInput, price: e.target.value})} 
+            />
+            <input
+                type='file'
+                name='Asset'
+                className='mt-4'
+                // call the function onChange
+                onChange={onChange} 
+            />
+            {/* ternary operator - only true */}
+            {fileUrl && (
+                <img className='rounded mt-4' width='350px' src={fileUrl} />
+            )}
+            <button onClick={createMarket}
+                className='font-bold mt-4 bg-purple-500 text-white rounded p-4 shadow-lg'>
+                    Mint NFT
+            </button>
+            </div>
+        </div>
+    )
 
 }
