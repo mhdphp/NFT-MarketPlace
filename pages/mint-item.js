@@ -106,6 +106,7 @@ export default function MintItem() {
                 className='mt-2 border rounded p-4'
                 onChange={ e => updateFormInput({...formInput, price: e.target.value})} 
             />
+            {/* browse file on the computer */}
             <input
                 type='file'
                 name='Asset'

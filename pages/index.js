@@ -36,6 +36,8 @@ export default function Home() {
     const items = await Promise.all(data.map(async i => {
       // get the tokenUri
       const tokenUri = await tokenContract.tokenURI(i.tokenId)
+      const sigIPFS = tokenUri.split("/").pop()
+      const tokenIPFS_URI = "https://ipfs.infura.io/ipfs/" + sigIPFS;
       // we want get the token metadata - json from the nft URI
       const meta = await axios.get(tokenUri)
 
@@ -48,7 +50,8 @@ export default function Home() {
         owner: i.owner,
         image: meta.data.image, 
         name: meta.data.name,
-        description: meta.data.description
+        description: meta.data.description,
+        tokenIPFS_URI
       }
       return item
     }))
@@ -92,6 +95,18 @@ export default function Home() {
                     <p style={{height:'64px'}} className='text-3x1 font-semibold'>{nft.name}</p>
                     <div style={{height:'72px', overflow:'hidden'}}>
                       <p className='text-gray-400'>{nft.description}</p>
+                    </div>
+                  </div>
+                  {/* display the infura / ipfs URI for metadata */}
+                  <div className='p-4'>
+                    <p style={{height:'64px'}} className='text-3x1 font-semibold'>Token Metatada on IPFS</p>
+                    <div style={{height:'72px'}}>
+                      <a 
+                        className='dark:md:hover:bg-orange-700 no-underline hover:underline hover:font-bold' 
+                        href={nft.tokenIPFS_URI} 
+                        target="_blank">
+                          NFT Metadata on IPFS
+                      </a>
                     </div>
                   </div>
                   <div className='p-4 bg-black'>
