@@ -84,7 +84,6 @@ export default function MintItem() {
         // list the token (nft) to market - access the makeMarketItem() from KBMarket.sol contract
         transaction = await contract.makeMarketItem(nftAddress, tokenId, price, {value: listingPrice})
         await transaction.wait()
-        router.push('./')
     }
 
     return(
@@ -125,5 +124,4 @@ export default function MintItem() {
             </div>
         </div>
     )
-
 }

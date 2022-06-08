@@ -3,6 +3,13 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 Course: https://www.udemy.com/course/build-an-nft-marketplace-from-scratch-blockchain-dapp
 Instructor: Clarian North
 
+The DApp has some changes - for each NFT there are some other fields:
+- the NFT metadata on Infura/IPFS
+- the Seller address
+- the Owner address
+- the Sale Status - Sold / Item for Sale
+- the Metamask account address on the Nav
+
 ## Getting Started
 
 First, run the development server:

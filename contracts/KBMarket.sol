@@ -201,34 +201,34 @@ contract KBMarket is ReentrancyGuard {
     }
 
 
-    // function that returns an array of minted nfts
-    // the seller is minting the nfts
+    // function that returns an array of all minted and put to market nfts
     function fetchItemsCreated() public view returns(MarketToken[] memory){
         // the same as fetchMyNFTs but instead of .owner will be .seller
         uint totalItemCount = _tokenIds.current();
-        uint itemCount = 0;
+        // uint itemCount = 0;
         uint currentIndex = 0;
 
         // check if the tokens are owned by the caller of this function - msg.sender
-        for (uint i = 0; i < totalItemCount; i++) {
-            // check if the token belong the seller
-            if(idToMarketToken[i+1].seller == msg.sender){
-                // increase the itemCount by one unit
-                // the final itemCount represents the no of tokens owned by seller
-                itemCount += 1;
-            }
-        }
-        MarketToken[] memory items = new MarketToken[](itemCount); // total tokens seller
+        // for (uint i = 0; i < totalItemCount; i++) {
+        //     // check if the token belong the seller
+        //     if(idToMarketToken[i+1].seller == msg.sender){
+        //         // increase the itemCount by one unit
+        //         // the final itemCount represents the no of tokens owned by seller
+        //         itemCount += 1;
+        //     }
+        // }
+        MarketToken[] memory items = new MarketToken[](totalItemCount); // total tokens
         // second loop
         for(uint i = 0; i < totalItemCount; i++) {
-            if(idToMarketToken[i+1].seller == msg.sender) {
+            // if(idToMarketToken[i+1].seller == msg.sender) {
                 uint currentId = idToMarketToken[i+1].itemId;
                 MarketToken storage currentItem = idToMarketToken[currentId];
                 items[currentIndex] = currentItem;
                 currentIndex += 1;
-            }
+            // }
         }
-        return items; // return an array of MarketToken[] that belong to the caller - the seller
+        return items;
     }
+
 }
 

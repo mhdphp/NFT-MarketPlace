@@ -11,27 +11,29 @@ import NFT from '../artifacts/contracts/NFT.sol/NFT.json'
 import KBMarket from '../artifacts/contracts/KBMarket.sol/KBMarket.json'
 
 
-export default function Home() {
-  // all the NFTs minted and put to sale on market nfts
+export default function MyAssets() {
   const [nfts, setNFTs] = useState([])
   const [loadingState, setLoadingState] = useState('not-loaded')
-
 
   useEffect(() =>{
     loadNFTs()
   }, [])
 
-
   async function loadNFTs() {
     // what we want to load:
-    // ***provider, tokenContract, marketContract, data for our marketItems***
-    // get the connection with blockchain
-    const provider = new ethers.providers.JsonRpcProvider()
+    // we to get the msg.sender to display the owned nfts for this caller
+     // 1. connect to the blockchain, connect to Metamask wallet using the account as signer
+    const web3Modal = new Web3Modal()
+    const connection = await web3Modal.connect()
+    const provider = new ethers.providers.Web3Provider(connection)
+    const signer = provider.getSigner()
+   
     // get the nftContract and marketContract
     const tokenContract = new ethers.Contract(nftAddress, NFT.abi, provider)
-    const marketContract = new ethers.Contract(nftMarketAddress, KBMarket.abi, provider)
+    // connect to the marketContract as the signer (the Metamask account)
+    const marketContract = new ethers.Contract(nftMarketAddress, KBMarket.abi, signer)
     // get all the tokens - nfts
-    const data = await marketContract.fetchMarketTokens()
+    const data = await marketContract.fetchMyNFTs()
 
     const items = await Promise.all(data.map(async i => {
       // get the tokenUri
@@ -51,6 +53,7 @@ export default function Home() {
         image: meta.data.image, 
         name: meta.data.name,
         description: meta.data.description,
+        sold: i.sold,
         tokenIPFS_URI
       }
       return item
@@ -60,27 +63,9 @@ export default function Home() {
     setLoadingState('loaded')
   }
 
-  // function to buy nfts for market 
-  async function buyNFT(nft) {
-    const web3Modal = new Web3Modal() // library to detect browse based wallets
-    const connection = await web3Modal.connect() // connect to the active wallet Metamask in our case
-    const provider = new ethers.providers.Web3Provider(connection)
-    // get signer - caller of the contract
-    const signer = provider.getSigner()
-    const contract = new ethers.Contract(nftMarketAddress, KBMarket.abi, signer)
-
-    // convert price to readable string
-    const price = ethers.utils.parseUnits(nft.price.toString(), 'ether')
-    // call the createMarketSale() function from the contract
-    const transaction = await contract.createMarketSale(nftAddress, nft.tokenId, {
-      value: price
-    })
-    await transaction.wait()
-    loadNFTs()
-  }
   // check if the nfts array is 0 after the loading process is finished
   if(loadingState === 'loaded' && !nfts.length) return (<h1
-    className='px-20 py-7 text-4x1 font-bold'>No NFts in Marketplace</h1>)
+    className='px-20 py-7 text-4x1 font-bold'>You do not own any NFTs</h1>)
 
 
   return (
@@ -98,11 +83,12 @@ export default function Home() {
                     </div>
                   </div>
                   {/* display the infura / ipfs URI for metadata */}
-                  <div className='p-4'>
-                    <p style={{height:'64px'}} className='text-3x1 font-semibold'>Token Metatada on IPFS</p>
-                    <div style={{height:'72px'}}>
+                  <div className='p-2'>
+                    <p className='text-3x1 font-semibold'>Token Metatada on IPFS:</p>
+                    <div style={{height:'20px'}}>
                       <a 
-                        className='dark:md:hover:bg-orange-700 no-underline hover:underline hover:font-bold' 
+                        className=' text-rose-900 font-medium dark:hover:bg-orange-700 no-underline 
+                        hover:underline hover:font-bold' 
                         href={nft.tokenIPFS_URI} 
                         target="_blank">
                           NFT Metadata on IPFS
@@ -111,13 +97,10 @@ export default function Home() {
                   </div>
                   <div className='p-4'>
                     <p className='break-words font-semibold'>Seller: {nft.seller}</p>
+                    <p className='break-words font-semibold'>Owner: {nft.owner}</p>
                   </div>
-                  <div className='p-4 bg-black'>
-                      <p className='text-3x-1 mb-4 font-bold text-white'>{nft.price} ETH</p>
-                      <button 
-                        className='w-full bg-purple-500 text-white font-bold py-3 px-12 rounded'
-                        onClick={()=> buyNFT(nft)} >Buy
-                      </button>
+                  <div className='p-4 bg-black mt-3'>
+                      <p className='text-3x-1 mb-1 font-bold text-white'>{nft.price} ETH</p>
                   </div>
                 </div>
               ))

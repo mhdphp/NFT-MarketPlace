@@ -25,7 +25,8 @@ contract NFT is ERC721URIStorage {
     //     _symbol = symbol_;
     // }
 
-    // constructor  setup name, symbol -from ERC721 constructor and marketAddress from local constructor
+    // constructor  setup name, symbol -from ERC721 constructor 
+    //and marketAddress from local constructor
     constructor(address marketAddress) ERC721('KryptoBirdz','KBIRDZ') {
         contractAddress = marketAddress;
     }
